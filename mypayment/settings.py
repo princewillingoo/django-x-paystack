@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'payment.apps.PaymentConfig',
     
-    'widgets_tweaks'
+    'widget_tweaks'
 ]
 
 MIDDLEWARE = [
