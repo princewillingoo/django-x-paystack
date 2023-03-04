@@ -80,6 +80,29 @@ def payment_process(request):
 ###previous code###
 
 def payment_success(request):
+
+    # retrive the payment_id we'd set in the django session ealier
+    payment_id = request.session.get('payment_id', None)#new
+    # using the payment_id, get the database object
+    payment = get_object_or_404(Payment, id=payment_id)#new
+    
+    # retrive the query parameter from the request object
+    ref = request.GET.get('reference', '')#new
+    # verify transaction endpoint
+    url = 'https://api.paystack.co/transaction/verify/{}'.format(ref)#new
+    
+    # set auth headers
+    headers = {"authorization": f"Bearer {api_key}"}#new
+    r = requests.get(url, headers=headers)#new
+    res = r.json()#new
+    res = res["data"]
+
+    # verify status before setting payment_ref
+    if res['status'] == "success":  # new
+        # update payment payment reference
+        payment.paystack_ref = ref #new
+        payment.save()#new
+    
     return render(request, 'payment/success.html')
 
 def payment_canceled(request):
